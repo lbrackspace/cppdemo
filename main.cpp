@@ -83,7 +83,10 @@ int main(int argc, char **argv) {
                 cout << DemoUtils::showvector<double>(dvector) << endl;
             } else if ((nArgs >= 1) && (cmdArgs[0].compare("nwb") == 0)) {
                 long wasted_size = 0;
-                for (vector<string>::iterator si = strVector->begin(); si != strVector->end(); si++) {
+                vector<string>::iterator si;
+                vector<string>::iterator beg = strVector->begin();
+                vector<string>::iterator end = strVector->end();
+                for (si = beg; si != end; si++) {
                     wasted_size += strlen(si->c_str());
                 }
                 cout << "bytes wasted so far is " << nwb << "= " << wasted_size << endl;
@@ -110,19 +113,21 @@ int main(int argc, char **argv) {
                 cout << val << endl;
             } else if (nArgs >= 1 && (cmdArgs[0].compare("keys") == 0)) {
                 cout << "{";
+                map<string, string>::iterator ki;
                 map<string, string>::iterator beg = strMap->begin();
                 map<string, string>::iterator end = strMap->end();
 
-                for (map<string, string>::iterator ki = beg; ki != end; ki++) {
+                for (ki = beg; ki != end; ki++) {
                     string key = ki->first;
                     cout << "\"" << key << "\", ";
                 }
                 cout << "}" << endl;
             } else if (nArgs >= 1 && (cmdArgs[0].compare("allmap") == 0)) {
+                map<string, string>::iterator mi;
                 map<string, string>::iterator beg = strMap->begin();
                 map<string, string>::iterator end = strMap->end();
                 cout << "{";
-                for (map<string, string>::iterator mi = beg; mi != end; mi++) {
+                for (mi = beg; mi != end; mi++) {
                     string key = mi->first;
                     string val = mi->second;
                     cout << "(\"" << key << "\",\"" << val << "\"), ";
