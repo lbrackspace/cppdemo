@@ -17,6 +17,7 @@ public:
     static string vector2string(const vector<string> &strVector);
     static int string2vector(const string& strIn, vector<string>& strVector);
     static string showstringvector(const vector<string> &strVector);
+    static double avg(const vector<double>& vals);
 
     template<typename T> static string showvector(const vector<T>& v) {
         ostringstream os;

@@ -4,14 +4,17 @@ CF=-O0 -ggdb -I.
 
 all: cppdemo
 
-main.o: main.cpp DemoUtils.h
-	g++ $(CF) -c main.cpp
+main.o: main.cpp DemoUtils.h Matrix.h
+	g++ $(CF) -c main.cpp 
 
 DemoUtils.o: DemoUtils.cpp DemoUtils.h
 	g++ $(CF) -c DemoUtils.cpp
 
-cppdemo: main.o DemoUtils.o
-	g++ $(CF) -o cppdemo main.o DemoUtils.o
+Matrix.o: Matrix.h Matrix.cpp
+	g++ $(CF) -c Matrix.cpp
+
+cppdemo: main.o DemoUtils.o Matrix.o
+	g++ $(CF) -o cppdemo main.o DemoUtils.o Matrix.o
 
 clean:
 	rm *.o

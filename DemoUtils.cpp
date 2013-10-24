@@ -124,3 +124,19 @@ double DemoUtils::gettimevalue() {
     out = (double) tv.tv_sec + (double) tv.tv_usec * 0.000001;
     return out;
 }
+
+double DemoUtils::avg(const vector<double> &vals) {
+    int n = 0;
+    double sum = 0.0;
+    if (vals.size() == 0) {
+        return NAN;
+    }
+    vector<double>::const_iterator di;
+    vector<double>::const_iterator beg = vals.begin();
+    vector<double>::const_iterator end = vals.end();
+    for (di = beg; di != end; di++) {
+        n++;
+        sum += *di;
+    }
+    return sum / double(n);
+}

@@ -27,7 +27,8 @@ string help() {
             << "dkey #Delete the key from the map<string,string> strMap object" << endl
             << "ln <nTimes> #Execute loop nTimes" << endl
             << "allmap #Display all key values in map<string,string> strMap object" << endl
-            << "nv <double1...double2> #Normalize vector" << endl;
+            << "nv <double1...double> #Normalize vector" << endl
+            << "avg <double1...double> #compute Average vector" << endl;
     return os.str();
 }
 
@@ -101,6 +102,17 @@ int main(int argc, char **argv) {
                 string val = cmdArgs[2];
                 cout << "setting map[" << key << "]=" << val << endl;
                 strMap->insert(make_pair(key, val));
+            } else if ((nArgs >= 2) && (cmdArgs[0].compare("avg") == 0)) {
+                vector<double> dvector;
+                cout << "Converting strings to double" << endl;
+                for (i = 1; i < nArgs; i++) {
+                    double val = std::atof(cmdArgs[i].c_str());
+                    dvector.push_back(val);
+                }
+                cout << "vector<double> vals = " << DemoUtils::showvector<double>(dvector) << endl;
+                double avg = DemoUtils::avg(dvector);
+                cout << "abg = " << avg << endl;
+
             } else if (nArgs >= 2 && (cmdArgs[0].compare("get") == 0)) {
                 string key = cmdArgs[1];
                 cout << "getting map[" << key << "]=";
