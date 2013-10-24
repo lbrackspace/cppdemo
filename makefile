@@ -4,9 +4,6 @@ CF=-O0 -ggdb -I.
 
 all: cppdemo
 
-
-all: cppdemo
-
 main.o: main.cpp DemoUtils.h
 	g++ $(CF) -c main.cpp
 
