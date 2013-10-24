@@ -40,13 +40,12 @@ string DemoUtils::showstringchars(const string& strIn) {
     return os.str();
 }
 
-
 string DemoUtils::showstringvector(const vector<string>& strVector) {
     ostringstream os;
     const vector<string>::const_iterator beg = strVector.begin();
     const vector<string>::const_iterator end = strVector.end();
     os << "{ ";
-    for (vector<string>::const_iterator si = beg; si != end; ++si) {
+    for (vector<string>::const_iterator si = beg; si != end; si++) {
         os << "\"" << *si << "\"";
         if (end - 1 > si) {
             os << ", ";

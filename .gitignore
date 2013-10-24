@@ -3,4 +3,6 @@ cppdemo
 nbproject/*
 cppdemo-Makefile.mk
 .dep.inc
-
+.cproject
+.project
+.settings/*

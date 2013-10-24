@@ -64,7 +64,7 @@ int main(int argc, char **argv) {
                 nwb += nBytes;
                 delete tmpBytes;
             } else if ((nArgs >= 1) && (cmdArgs[0].compare("pa") == 0)) {
-                string argStr = DemoUtils::showstringvector(cmdArgs);
+                string argStr = DemoUtils::showvector<string > (cmdArgs);
                 cout << "args = " << argStr << endl;
             } else if ((nArgs >= 1) && (cmdArgs[0].compare("fb") == 0)) {
                 cout << "Freeing " << nwb << " bytes" << endl;
@@ -73,10 +73,15 @@ int main(int argc, char **argv) {
                 nwb = 0;
             } else if ((nArgs >= 2) && (cmdArgs[0].compare("nv") == 0)) {
                 vector<double> dvector;
+                cout << "Converting strings to double" << endl;
                 for (i = 1; i < nArgs; i++) {
-                    double val = std::atof(argv[i]);
+                    double val = std::atof(cmdArgs[i].c_str());
                     dvector.push_back(val);
                 }
+                cout << "vector<double> vals = " << DemoUtils::showvector<double>(dvector) << endl;
+                cout << "Normalizing" << endl;
+                DemoUtils::normalize(dvector);
+                cout << DemoUtils::showvector<double>(dvector) << endl;
             } else if ((nArgs >= 1) && (cmdArgs[0].compare("nwb") == 0)) {
                 long wasted_size = 0;
                 for (vector<string>::iterator si = strVector->begin(); si != strVector->end(); si++) {
