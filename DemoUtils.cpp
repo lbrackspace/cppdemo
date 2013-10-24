@@ -4,8 +4,11 @@
 
 #include<string>
 #include<sstream>
+#include<sys/time.h>
+#include<stdio.h>
+#include<cmath>
 
-const int STRBUFFSIZE = 4096;
+const int STRBUFFSIZE = 1024;
 
 using namespace std;
 
@@ -26,60 +29,99 @@ string DemoUtils::args2String(int argc, char** argv) {
     return os.str();
 }
 
-string DemoUtils::showstringchars(string& strIn) {
+string DemoUtils::showstringchars(const string& strIn) {
     ostringstream os;
-    const string::iterator beg = strIn.begin();
-    const string::iterator end = strIn.end();
-    for (string::iterator si = beg; si != end; si++) {
+    const string::const_iterator beg = strIn.begin();
+    const string::const_iterator end = strIn.end();
+    for (string::const_iterator si = beg; si != end; si++) {
         int i = si - beg;
         os << "str[" << i << "]=\"" << *si << "\"" << endl;
     }
-    os << "What the fuck" << endl;
+    return os.str();
+}
+
+
+string DemoUtils::showstringvector(const vector<string>& strVector) {
+    ostringstream os;
+    const vector<string>::const_iterator beg = strVector.begin();
+    const vector<string>::const_iterator end = strVector.end();
+    os << "{ ";
+    for (vector<string>::const_iterator si = beg; si != end; ++si) {
+        os << "\"" << *si << "\"";
+        if (end - 1 > si) {
+            os << ", ";
+        }
+    }
+    os << "}";
     return os.str();
 }
 
 int DemoUtils::string2vector(const string& strIn, vector<string>& strVector) {
     int nStrings = 0;
-    const char *strArray = strIn.c_str();
-    char buff[STRBUFFSIZE];
-    int i = 0;
+    char buff[STRBUFFSIZE + 1];
+    buff[0] = '\0';
     int ci = 0;
     int cb = 0;
-    int ce = 0;
     int cl;
     int li = strIn.size();
-    for (ci = 0; ci < li; ci++) {
-        ce = ci;
-        cl = ce - cb;
-        if (strArray[ci] == '\0') {
-            break;
-        }
-        if (strArray[ci] == ' ' || cl > STRBUFFSIZE + 1) {
-            if (cl > 0) {
-                for (i = 0; i < cl; i++) {
-                    buff[i] = strArray[cb + i];
-                }
-                buff[cl] = '\0';
-                string str = string(buff);
-                strVector.push_back(buff);
-                cb = ce + 1;
-                ci = cb;
-                nStrings++;
+    for (ci = 0; ci <= li; ci++) {
+        cl = ci - cb;
+        if (strIn[ci] == ' ' || strIn[ci] == '\0' || cl >= STRBUFFSIZE) {
+            if (cl <= 0) {
+                cb = ci + 1;
+                buff[0] = '\0';
+                continue;
             }
+            buff[ci - cb] = '\0';
+            cb = ci + 1;
+            strVector.push_back(string(buff));
+            nStrings++;
+            buff[0] = '\0';
+            continue;
         }
+        buff[ci - cb] = strIn[ci];
     }
     return nStrings;
 }
 
-string DemoUtils::vector2string(vector<string> &strVector) {
+string DemoUtils::vector2string(const vector<string> &strVector) {
     ostringstream os;
-    vector<string>::iterator beg = strVector.begin();
-    vector<string>::iterator end = strVector.end();
+    const vector<string>::const_iterator beg = strVector.begin();
+    const vector<string>::const_iterator end = strVector.end();
 
     os << "Iterating through " << strVector.size() << " strings" << endl;
-    for (vector<string>::iterator si = beg; si != end; si++) {
+    for (vector<string>::const_iterator si = beg; si != end; si++) {
         int entry_i = si - beg;
         os << "strVector[" << entry_i << "]=\"" << *si << "\"" << endl;
     }
     return os.str();
+}
+
+void DemoUtils::normalize(vector<double> &v) {
+    double squaredSum = 0.0;
+    int i;
+    if (v.size() == 0) {
+        return; // Can't normalize 0 entry vector so do nothing
+    }
+    for (i = 0; i < v.size(); i++) {
+        squaredSum += v[i] * v[i];
+    }
+
+    if (squaredSum == 0.0) {
+        return; // Can't normalize a 0 length vector either so do nothing
+    }
+    double divisor = 1.0 / sqrt(squaredSum);
+    for (i = 0; i < v.size(); i++) {
+        v[i] *= divisor;
+    }
+}
+
+double DemoUtils::gettimevalue() {
+    double out;
+    struct timeval tv;
+    if (gettimeofday(&tv, NULL) == -1) {
+        return NAN;
+    }
+    out = (double) tv.tv_sec + (double) tv.tv_usec * 0.000001;
+    return out;
 }

@@ -1,7 +1,9 @@
+CF=-O0 -ggdb -I.
+#CF= -O3 -ftracer -funroll-loops -funsafe-loop-optimizations -ggdb -I.
+#CF= -O3 -I.
 
 all: cppdemo
 
-CF=-O0 -ggdb -I.
 
 all: cppdemo
 
