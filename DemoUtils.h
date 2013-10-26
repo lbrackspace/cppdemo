@@ -15,7 +15,7 @@ public:
     static string showstringchars(const string& strIn);
     static string args2String(int argc, char **argv);
     static string vector2string(const vector<string> &strVector);
-    static int string2vector(const string& strIn, vector<string>& strVector);
+    static int string2vector(const string& strIn, vector<string>& strVector,char delim);
     static string showstringvector(const vector<string> &strVector);
     static double avg(const vector<double>& vals);
 

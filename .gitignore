@@ -1,5 +1,6 @@
 *.o
 cppdemo
+boosttests
 nbproject/*
 cppdemo-Makefile.mk
 .dep.inc

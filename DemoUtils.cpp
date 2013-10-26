@@ -1,7 +1,6 @@
-#include "DemoUtils.h"
 
+#include<DemoUtils.h>
 #include<string.h>
-
 #include<string>
 #include<sstream>
 #include<sys/time.h>
@@ -55,7 +54,7 @@ string DemoUtils::showstringvector(const vector<string>& strVector) {
     return os.str();
 }
 
-int DemoUtils::string2vector(const string& strIn, vector<string>& strVector) {
+int DemoUtils::string2vector(const string& strIn, vector<string>& strVector, char delim) {
     int nStrings = 0;
     char buff[STRBUFFSIZE + 1];
     buff[0] = '\0';
@@ -65,7 +64,7 @@ int DemoUtils::string2vector(const string& strIn, vector<string>& strVector) {
     int li = strIn.size();
     for (ci = 0; ci <= li; ci++) {
         cl = ci - cb;
-        if (strIn[ci] == ' ' || strIn[ci] == '\0' || cl >= STRBUFFSIZE) {
+        if (strIn[ci] == delim || strIn[ci] == '\0' || cl >= STRBUFFSIZE) {
             if (cl <= 0) {
                 cb = ci + 1;
                 buff[0] = '\0';

@@ -1,11 +1,15 @@
-CF=-O0 -ggdb -I.
-#CF= -O3 -ftracer -funroll-loops -funsafe-loop-optimizations -ggdb -I.
-#CF= -O3 -I.
+CF= -O0 -ggdb -I.
 
-all: cppdemo
+all: cppdemo boosttests
 
-main.o: main.cpp DemoUtils.h Matrix.h
+main.o: main.cpp DemoUtils.h Matrix.h ThreadManager.h
 	g++ $(CF) -c main.cpp 
+
+BoostTests.o: BoostTests.cpp
+	g++ $(CF) -c BoostTests.cpp
+
+ThreadTest.o: ThreadManager.cpp ThreadManager.h
+	g++ $(CF) -c ThreadManager.cpp
 
 DemoUtils.o: DemoUtils.cpp DemoUtils.h
 	g++ $(CF) -c DemoUtils.cpp
@@ -13,9 +17,10 @@ DemoUtils.o: DemoUtils.cpp DemoUtils.h
 Matrix.o: Matrix.h Matrix.cpp
 	g++ $(CF) -c Matrix.cpp
 
-cppdemo: main.o DemoUtils.o Matrix.o
-	g++ $(CF) -o cppdemo main.o DemoUtils.o Matrix.o
+cppdemo: main.o DemoUtils.o Matrix.o ThreadTest.o
+	g++ $(CF) -o cppdemo main.o DemoUtils.o Matrix.o ThreadManager.o -lboost_thread-mt -lboost_system-mt
 
+boosttests: BoostTests.o
+	g++ $(CF) -o boosttests BoostTests.o DemoUtils.o Matrix.o ThreadManager.o -lboost_thread-mt -lboost_system-mt -lboost_unit_test_framework-mt
 clean:
-	rm *.o
-	rm cppdemo
+	rm *.o cppdemo boosttests
