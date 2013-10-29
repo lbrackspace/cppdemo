@@ -2,6 +2,7 @@
 #include<DemoUtils.h>
 #include<ThreadManager.h>
 #include<Matrix.h>
+#include<Point.h>
 #include<boost/thread.hpp>
 #include<exception>
 #include<stdexcept>
@@ -16,6 +17,7 @@
 using namespace std;
 
 const int LINE_SIZE = 1024;
+Point getPoint(vector<string> args, int offset);
 string showsizeof();
 string help();
 
@@ -24,6 +26,9 @@ int main(int argc, char **argv) {
     int nArgs = 0;
     int i;
     long nwb = 0;
+    Point p1;
+    Point p2;
+    Point sum;
     vector<string> *strVector = new vector<string>;
     map<string, string> *strMap = new map<string, string>;
     vector<Matrix>matVector;
@@ -175,6 +180,11 @@ int main(int argc, char **argv) {
             } else if ((nArgs >= 1) && cmdArgs[0].compare("mf") == 0) {
                 cout << "Clearing " << matVector.size() << " entries from matrix vector" << endl;
                 matVector.clear();
+            } else if ((nArgs >= 7) && cmdArgs[0].compare("ap") == 0) {
+                p1 = getPoint(cmdArgs, 1);
+                p2 = getPoint(cmdArgs, 4);
+                sum = p1 + p2;
+                cout << "Sum of " << p1.str() << " + " << p2.str() << " = " << sum.str() << endl;
             } else if ((nArgs >= 2) && cmdArgs[0].compare("ma") == 0) {
                 int nMatrixes = std::atoi(cmdArgs[1].c_str());
                 cout << "Adding " << nMatrixes << " 100x100 matrixes" << endl;
@@ -193,6 +203,14 @@ int main(int argc, char **argv) {
     delete strMap;
     delete cmd;
     return 0;
+}
+
+Point getPoint(vector<string> args, int offset) {
+    double x = std::atof(args[offset + 0].c_str());
+    double y = std::atof(args[offset + 1].c_str());
+    double z = std::atof(args[offset + 2].c_str());
+    Point p = Point(x, y, z);
+    return p;
 }
 
 string help() {
@@ -216,7 +234,9 @@ string help() {
             << "nt <nThreads> <nSecs> <nTimes> #Spawn nThreads with each one sleeping for nSecs nTimes" << endl
             << "sizeof #Get size of varias data types" << endl
             << "ma <nEntries> # Add n 100x100 matrixes into memory" << endl
-            << "mf #Free matrixes from memory" << endl;
+            << "mf #Free matrixes from memory" << endl
+            << "ap <x1> <y1> <z1> <x2> <y2> <z2> #Add the two points together" << endl
+            << "dp <x1> <y1> <z1> <x2> <y2> <z2> #Dot the two points together" << endl;
     return os.str();
 }
 
