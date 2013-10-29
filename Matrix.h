@@ -4,6 +4,7 @@
 #include<iostream>
 #include<sstream>
 #include<string>
+#include<ostream>
 
 class Matrix {
 public:
@@ -36,7 +37,7 @@ public:
     static Matrix *incremental(int m, int n);
     std::string to_string();
     static void mulMatMat(Matrix* r, Matrix* a, Matrix* b);
-
+    friend std::ostream & operator<<(std::ostream &os, const Matrix &m);
 private:
     int nRows;
     int nCols;

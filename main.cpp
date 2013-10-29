@@ -12,9 +12,12 @@
 #include<string.h>
 #include<cstdlib>
 #include<unistd.h>
+#include<boost/smart_ptr.hpp>
 #include<map>
+#include <bitset>
 
 using namespace std;
+using namespace boost;
 
 const int LINE_SIZE = 1024;
 Point getPoint(vector<string> args, int offset);
@@ -31,7 +34,9 @@ int main(int argc, char **argv) {
     Point sum;
     vector<string> *strVector = new vector<string>;
     map<string, string> *strMap = new map<string, string>;
+    shared_ptr<string> strPtr(new string("default"));
     vector<Matrix>matVector;
+    vector < shared_ptr < string > > strPtrs;
     string prompt = "Silly Shell> ";
     ThreadManager tm(cout);
     vector<string>cmdArgs;
@@ -96,7 +101,8 @@ int main(int argc, char **argv) {
                 string key = cmdArgs[1];
                 string val = cmdArgs[2];
                 cout << "setting map[" << key << "]=" << val << endl;
-                strMap->insert(make_pair(key, val));
+                //strMap->insert(make_pair(key, val));
+                (*strMap)[key] = val;
             } else if ((nArgs >= 2) && (cmdArgs[0].compare("avg") == 0)) {
                 vector<double> dvector;
                 cout << "Converting strings to double" << endl;
@@ -145,6 +151,8 @@ int main(int argc, char **argv) {
                 string key = cmdArgs[1];
                 cout << "deleting key " << key << endl;
                 strMap->erase(key);
+            } else if ((nArgs >= 1) && (cmdArgs[0].compare("pid")) == 0) {
+                cout << "pid = " << getpid() << endl;
             } else if ((nArgs >= 2) && (cmdArgs[0].compare("ln") == 0)) {
                 int nTimes = atoi(cmdArgs[1].c_str());
                 cout << "Looping " << nTimes << endl;
@@ -184,13 +192,51 @@ int main(int argc, char **argv) {
                 p1 = getPoint(cmdArgs, 1);
                 p2 = getPoint(cmdArgs, 4);
                 sum = p1 + p2;
-                cout << "Sum of " << p1.str() << " + " << p2.str() << " = " << sum.str() << endl;
+                cout << "Sum of " << p1 << " + " << p2 << " = " << sum << endl;
+            } else if ((nArgs >= 7) && cmdArgs[0].compare("dp") == 0) {
+                p1 = getPoint(cmdArgs, 1);
+                p2 = getPoint(cmdArgs, 4);
+                double dp = dot(p1, p2);
+                cout << "dot(" << p1 << "," << p2 << ") = " << dp << endl;
             } else if ((nArgs >= 2) && cmdArgs[0].compare("ma") == 0) {
                 int nMatrixes = std::atoi(cmdArgs[1].c_str());
                 cout << "Adding " << nMatrixes << " 100x100 matrixes" << endl;
                 for (i = 0; i < nMatrixes; i++) {
                     matVector.push_back(Matrix(100, 100));
                 }
+            } else if ((nArgs >= 2) && cmdArgs[0].compare("ss") == 0) {
+                strPtr = shared_ptr<string > (new string(cmdArgs[1]));
+                cout << "*strPtr = " << *strPtr << endl;
+            } else if ((nArgs >= 1) && cmdArgs[0].compare("as") == 0) {
+                int nPtrs = 1;
+                if (nArgs >= 2) nPtrs = std::atoi(cmdArgs[1].c_str());
+                cout << "Attaching " << *strPtr << " " << nPtrs << " times" << endl;
+                for (i = 0; i < nPtrs; i++) {
+                    strPtrs.push_back(strPtr);
+                }
+            } else if ((nArgs >= 1) && cmdArgs[0].compare("sc") == 0) {
+                cout << "*strPtr = " << *strPtr << endl;
+                cout << "refCount(strPtr) = " << strPtr.use_count() << endl;
+                for (i = 0; i < strPtrs.size(); i++) {
+                    cout << "strPtrs[" << i << "] = " << *strPtrs[i] << " ref_cout=" << strPtrs[i].use_count() << endl;
+                }
+
+            } else if ((nArgs >= 1) && cmdArgs[0].compare("rs") == 0) {
+                int nPtrs = 1;
+                if (nArgs >= 2) nPtrs = std::atoi(cmdArgs[1].c_str());
+                cout << "removing " << nPtrs << " strings from sharedPtrs" << endl;
+                if (nPtrs > strPtrs.size()) {
+                    nPtrs = strPtrs.size();
+                }
+                cout << "There are only " << strPtrs.size() << " strings to delete deleting that only" << endl;
+                for (i = 0; i < nPtrs; i++) strPtrs.pop_back();
+                cout << "strPtrs size = " << strPtrs.size() << endl;
+
+
+            } else if ((nArgs >= 1) && cmdArgs[0].compare("cs") == 0) {
+
+            } else if ((nArgs >= 1) && cmdArgs[0].compare("exit") == 0) {
+                break;
             } else {
                 cout << "Unknown command" << cmd << endl;
                 cout << help() << endl;
@@ -216,6 +262,7 @@ Point getPoint(vector<string> args, int offset) {
 string help() {
     ostringstream os;
     os << "help #Displays this help menu" << endl
+            << "pid #show pid" << endl
             << "pa <args..> #Echo args" << endl
             << "wb <nBytes> #add nBytes to the vector<string> wb object" << endl
             << "fb #Free all bytes in vector<string> wb object" << endl
@@ -236,7 +283,13 @@ string help() {
             << "ma <nEntries> # Add n 100x100 matrixes into memory" << endl
             << "mf #Free matrixes from memory" << endl
             << "ap <x1> <y1> <z1> <x2> <y2> <z2> #Add the two points together" << endl
-            << "dp <x1> <y1> <z1> <x2> <y2> <z2> #Dot the two points together" << endl;
+            << "dp <x1> <y1> <z1> <x2> <y2> <z2> #Dot the two points together" << endl
+            << "ss <strVal> #Set the string pointer to the value of the given string" << endl
+            << "as strVa# push &strVal onto strPtrs vector" << endl
+            << "sc #Display reference count on stringPtr" << endl
+            << "cs #clear the smart_ptr<string> vector list" << endl
+            << "exit #Exit program" << endl;
+
     return os.str();
 }
 
@@ -256,6 +309,8 @@ string showsizeof() {
             << "sizeof(ThreadManager):    " << setw(4) << sizeof (ThreadManager) << endl
             << "sizeof(Matrix):           " << setw(4) << sizeof (Matrix) << endl
             << "sizeof(vector<double>):   " << setw(4) << sizeof (vector<double>) << endl
-            << "sizeof(vector<double *>): " << setw(4) << sizeof (vector<double *>) << endl;
+            << "sizeof(vector<double *>): " << setw(4) << sizeof (vector<double *>) << endl
+            << "sizeof(shared_ptr<string>): " << setw(4) << sizeof (shared_ptr<string>) << endl
+            << "sizeof(shared_ptr<double>): " << setw(4) << sizeof (shared_ptr<double>) << endl;
     return os.str();
 }

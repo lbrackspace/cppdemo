@@ -25,6 +25,8 @@ public:
     double getZ()const {
         return z;
     }
+    friend ostream & operator<<(ostream& os, const Point &p);
+    friend double dot(const Point &p1, const Point &p2);
 private:
     double x;
     double y;

@@ -131,6 +131,20 @@ void Matrix::rowSwap(int r1, int r2) {
     }
 }
 
+std::ostream & operator<<(std::ostream &os, const Matrix &m) {
+    os << "Matrix " << m.nRows << " x " << m.nCols << " @" << &m << std::endl;
+    for (int r = 1; r <= m.nRows; r++) {
+        for (int c = 1; c <= m.nCols; c++) {
+            os << m.get(r, c);
+            if (c < m.nCols) {
+                os << " ";
+            }
+        }
+        os << ";" << std::endl;
+    }
+    return os;
+}
+
 std::string Matrix::to_string() {
     std::ostringstream os;
     os << "Matrix " << nRows << " x " << nCols << " @" << this << std::endl;

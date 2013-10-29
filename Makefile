@@ -1,4 +1,4 @@
-CF= -O0 -ggdb -I.
+CF= -O0 -I. -ggdb
 
 all: cppdemo boosttests
 
