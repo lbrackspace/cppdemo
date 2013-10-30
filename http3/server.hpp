@@ -20,45 +20,45 @@
 #include "request_handler.hpp"
 
 namespace http {
-namespace server3 {
+    namespace server3 {
 
-/// The top-level class of the HTTP server.
-class server
-  : private boost::noncopyable
-{
-public:
-  /// Construct the server to listen on the specified TCP address and port, and
-  /// serve up files from the given directory.
-  explicit server(const std::string& address, const std::string& port,
-      const std::string& doc_root, std::size_t thread_pool_size);
+        /// The top-level class of the HTTP server.
 
-  /// Run the server's io_service loop.
-  void run();
+        class server
+        : private boost::noncopyable {
+        public:
+            /// Construct the server to listen on the specified TCP address and port, and
+            /// serve up files from the given directory.
+            explicit server(const std::string& address, const std::string& port,
+                    const std::string& doc_root, std::size_t thread_pool_size);
 
-  /// Stop the server.
-  void stop();
+            /// Run the server's io_service loop.
+            void run();
 
-private:
-  /// Handle completion of an asynchronous accept operation.
-  void handle_accept(const boost::system::error_code& e);
+            /// Stop the server.
+            void stop();
 
-  /// The number of threads that will call io_service::run().
-  std::size_t thread_pool_size_;
+        private:
+            /// Handle completion of an asynchronous accept operation.
+            void handle_accept(const boost::system::error_code& e);
 
-  /// The io_service used to perform asynchronous operations.
-  boost::asio::io_service io_service_;
+            /// The number of threads that will call io_service::run().
+            std::size_t thread_pool_size_;
 
-  /// Acceptor used to listen for incoming connections.
-  boost::asio::ip::tcp::acceptor acceptor_;
+            /// The io_service used to perform asynchronous operations.
+            boost::asio::io_service io_service_;
 
-  /// The next connection to be accepted.
-  connection_ptr new_connection_;
+            /// Acceptor used to listen for incoming connections.
+            boost::asio::ip::tcp::acceptor acceptor_;
 
-  /// The handler for all incoming requests.
-  request_handler request_handler_;
-};
+            /// The next connection to be accepted.
+            connection_ptr new_connection_;
 
-} // namespace server3
+            /// The handler for all incoming requests.
+            request_handler request_handler_;
+        };
+
+    } // namespace server3
 } // namespace http
 
 #endif // HTTP_SERVER3_SERVER_HPP
