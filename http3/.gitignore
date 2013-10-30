@@ -1,0 +1,8 @@
+http3demo
+*.o
+nbproject/*
+.dep.inc
+.cproject
+.project
+settings/*
+
