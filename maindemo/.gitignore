@@ -7,3 +7,4 @@ cppdemo-Makefile.mk
 .cproject
 .project
 .settings/*
+Makefile-maindemo.mk
