@@ -15,6 +15,7 @@
 #include <boost/bind.hpp>
 #include <boost/lexical_cast.hpp>
 #include "server.hpp"
+#include "Debug.h"
 
 #if !defined(_WIN32)
 
@@ -22,6 +23,9 @@
 #include <signal.h>
 
 int main(int argc, char* argv[]) {
+    std::cerr << "Sleeping for 5 seconds" << std::endl;
+    Debug::thread_sleep(5.0);
+    std::cerr << "Done sleeping" << std::endl;
     try {
         // Check command line arguments.
         if (argc != 5) {

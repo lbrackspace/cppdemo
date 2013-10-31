@@ -311,6 +311,9 @@ string showsizeof() {
             << "sizeof(vector<double>):   " << setw(4) << sizeof (vector<double>) << endl
             << "sizeof(vector<double *>): " << setw(4) << sizeof (vector<double *>) << endl
             << "sizeof(shared_ptr<string>): " << setw(4) << sizeof (shared_ptr<string>) << endl
-            << "sizeof(shared_ptr<double>): " << setw(4) << sizeof (shared_ptr<double>) << endl;
+            << "sizeof(shared_ptr<double>): " << setw(4) << sizeof (shared_ptr<double>) << endl
+            << endl
+            << "boost::thread::hardware_concurrency(): " << setw(4) << boost::thread::hardware_concurrency() << endl;
+
     return os.str();
 }

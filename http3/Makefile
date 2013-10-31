@@ -5,6 +5,9 @@ all: http3demo
 posix_main.o: posix_main.cpp server.hpp
 	g++ $(CF) -c posix_main.cpp
 
+Debug.o: Debug.cpp Debug.h
+	g++ $(CF) -c Debug.cpp
+
 connection.o: connection.hpp request_handler.hpp
 	g++ $(CF) -c connection.cpp
 
@@ -26,8 +29,8 @@ request_parser.o: request_parser.cpp request_parser.hpp
 server.o: server.cpp server.hpp
 	g++ $(CF) -c server.cpp
 
-http3demo: posix_main.o connection.o mime_types.o reply.o request_handler.o request_parser.o server.o
-	g++ $(CF) -o http3demo posix_main.o connection.o mime_types.o reply.o request_handler.o request_parser.o server.o -lboost_thread-mt -lboost_system-mt
+http3demo: posix_main.o connection.o mime_types.o reply.o request_handler.o request_parser.o server.o Debug.o
+	g++ $(CF) -o http3demo posix_main.o connection.o mime_types.o reply.o request_handler.o request_parser.o server.o Debug.o -lboost_thread-mt -lboost_system-mt
 
 clean:
 	rm *.o http3demo
