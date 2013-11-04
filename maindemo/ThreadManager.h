@@ -18,14 +18,11 @@ using namespace std;
 class ThreadManager {
 public:
     ThreadManager(ostream& _os);
-    ThreadManager(ostream& _os, const ThreadManager& orig);
     void newThread(int nSecs, int nTimes);
     void joinThreads();
+    void detachThreads();
     string to_string();
-
-    int nThreadsRunning() {
-        return threads.size();
-    };
+    int getNThreads() const;
     virtual ~ThreadManager();
 private:
     vector<thread*> threads;

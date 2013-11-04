@@ -16,10 +16,6 @@ Point::Point(double x, double y, double z) {
     cout << "Point(" << x << "," << y << "," << z << ") called" << endl;
 }
 
-Point::Point(const Point& orig) {
-    cout << "Point(const Point& orig) called" << endl;
-}
-
 Point::~Point() {
     cout << "~Point(" << x << "," << y << "," << z << ") called" << endl;
 }

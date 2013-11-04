@@ -13,6 +13,7 @@
 #include<cstdlib>
 #include<unistd.h>
 #include<boost/smart_ptr.hpp>
+#include<boost/asio.hpp>
 #include<map>
 #include <bitset>
 
@@ -23,6 +24,8 @@ const int LINE_SIZE = 1024;
 Point getPoint(vector<string> args, int offset);
 string showsizeof();
 string help();
+int nop();
+int demoCopyVsMove();
 
 int main(int argc, char **argv) {
     char *cmd = new char[LINE_SIZE + 1];
@@ -183,6 +186,12 @@ int main(int argc, char **argv) {
                     tm.newThread(nSecs, nTimes);
                 }
                 cout << "All threads spawned" << endl;
+            } else if ((nArgs >= 1) && cmdArgs[0].compare("dt") == 0) {
+                cout << "Detatching threads" << endl;
+                tm.detachThreads();
+            } else if ((nArgs >= 1) && cmdArgs[0].compare("tc") == 0) {
+                int nThreads = tm.getNThreads();
+                cout << "Threads count is " << nThreads << endl;
             } else if ((nArgs >= 1) && cmdArgs[0].compare("sizeof") == 0) {
                 cout << showsizeof() << endl;
             } else if ((nArgs >= 1) && cmdArgs[0].compare("mf") == 0) {
@@ -228,12 +237,12 @@ int main(int argc, char **argv) {
                 if (nPtrs > strPtrs.size()) {
                     nPtrs = strPtrs.size();
                 }
-                cout << "There are only " << strPtrs.size() << " strings to delete deleting that only" << endl;
+                cout << "There are only " << strPtrs.size() << " strings to delete deleting those only" << endl;
                 for (i = 0; i < nPtrs; i++) strPtrs.pop_back();
                 cout << "strPtrs size = " << strPtrs.size() << endl;
-
-
             } else if ((nArgs >= 1) && cmdArgs[0].compare("cs") == 0) {
+                cout << "Clearing " << strPtrs.size() << " entries from the strPtrs list" << endl;
+                strPtrs.clear();
 
             } else if ((nArgs >= 1) && cmdArgs[0].compare("exit") == 0) {
                 break;
@@ -276,16 +285,18 @@ string help() {
             << "allmap #Display all key values in map<string,string> strMap object" << endl
             << "nv <double1...double> #Normalize vector" << endl
             << "avg <double1...double> #compute Average vector" << endl
+            << "nt <nThreads> <nSecs> <nTimes> #Spawn nThreads with each one sleeping for nSecs nTimes" << endl
+            << "tc #Show thread count" << endl
             << "st #Show running threads" << endl
             << "jt #Join running threads" << endl
-            << "nt <nThreads> <nSecs> <nTimes> #Spawn nThreads with each one sleeping for nSecs nTimes" << endl
+            << "dt #Detach threads" << endl
             << "sizeof #Get size of varias data types" << endl
             << "ma <nEntries> # Add n 100x100 matrixes into memory" << endl
             << "mf #Free matrixes from memory" << endl
             << "ap <x1> <y1> <z1> <x2> <y2> <z2> #Add the two points together" << endl
             << "dp <x1> <y1> <z1> <x2> <y2> <z2> #Dot the two points together" << endl
             << "ss <strVal> #Set the string pointer to the value of the given string" << endl
-            << "as strVa# push &strVal onto strPtrs vector" << endl
+            << "as [nStrs] # push nStrs onto the strPtrs list or just one if nStrs isn't specified" << endl
             << "sc #Display reference count on stringPtr" << endl
             << "cs #clear the smart_ptr<string> vector list" << endl
             << "exit #Exit program" << endl;
@@ -312,8 +323,14 @@ string showsizeof() {
             << "sizeof(vector<double *>): " << setw(4) << sizeof (vector<double *>) << endl
             << "sizeof(shared_ptr<string>): " << setw(4) << sizeof (shared_ptr<string>) << endl
             << "sizeof(shared_ptr<double>): " << setw(4) << sizeof (shared_ptr<double>) << endl
+            << "sizeof(boost::ip::tcp::resolver " << setw(4) << sizeof (boost::asio::ip::tcp::resolver) << endl
+            << "sizeof(boost::ip::tcp::resolver::iterator " << setw(4) << sizeof (boost::asio::ip::tcp::resolver::iterator) << endl
             << endl
             << "boost::thread::hardware_concurrency(): " << setw(4) << boost::thread::hardware_concurrency() << endl;
 
     return os.str();
+}
+
+int nop() {
+    return 0;
 }

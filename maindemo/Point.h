@@ -9,7 +9,6 @@ class Point {
 public:
     Point();
     Point(double _x, double _y, double _z);
-    Point(const Point& orig);
     string str();
     Point operator+(Point &oth);
     virtual ~Point();
