@@ -10,7 +10,7 @@
 #include<string.h>
 #include<cstdlib>
 #include<unistd.h>
-#include<map>
+#include<boost/unordered_map.hpp>
 
 
 #include"DemoUtils.h"
@@ -44,7 +44,7 @@ int main(int argc, char **argv) {
     io_service ios;
     ring_buffer rb(0);
     vector<string> *strVector = new vector<string>;
-    map<string, string> *strMap = new map<string, string>;
+    unordered_map<string, string> *strMap = new unordered_map<string, string>;
     shared_ptr<string> strPtr(new string("default"));
     vector<Matrix>matVector;
     vector < shared_ptr < string > > strPtrs;
@@ -107,7 +107,7 @@ int main(int argc, char **argv) {
                 cout << help() << endl;
             } else if (nArgs >= 1 && (cmdArgs[0].compare("clearmap") == 0)) {
                 delete strMap;
-                strMap = new map<string, string>;
+                strMap = new unordered_map<string, string>;
             } else if (nArgs >= 3 && (cmdArgs[0].compare("put") == 0)) {
                 string key = cmdArgs[1];
                 string val = cmdArgs[2];
@@ -137,9 +137,9 @@ int main(int argc, char **argv) {
                 cout << val << endl;
             } else if (nArgs >= 1 && (cmdArgs[0].compare("keys") == 0)) {
                 cout << "{";
-                map<string, string>::iterator ki;
-                map<string, string>::iterator beg = strMap->begin();
-                map<string, string>::iterator end = strMap->end();
+                unordered_map<string, string>::iterator ki;
+                unordered_map<string, string>::iterator beg = strMap->begin();
+                unordered_map<string, string>::iterator end = strMap->end();
 
                 for (ki = beg; ki != end; ki++) {
                     string key = ki->first;
@@ -147,9 +147,9 @@ int main(int argc, char **argv) {
                 }
                 cout << "}" << endl;
             } else if (nArgs >= 1 && (cmdArgs[0].compare("allmap") == 0)) {
-                map<string, string>::iterator mi;
-                map<string, string>::iterator beg = strMap->begin();
-                map<string, string>::iterator end = strMap->end();
+                unordered_map<string, string>::iterator mi;
+                unordered_map<string, string>::iterator beg = strMap->begin();
+                unordered_map<string, string>::iterator end = strMap->end();
                 cout << "{";
                 for (mi = beg; mi != end; mi++) {
                     string key = mi->first;
@@ -289,9 +289,8 @@ int main(int argc, char **argv) {
             } else if (nArgs >= 2 && cmdArgs[0].compare("nrbdec") == 0) {
                 int nBytes = std::atoi(cmdArgs[1].c_str());
                 cout << "Decrementing ring buffer by " << nBytes << endl;
-                string readString(rb.read(nBytes));
                 int nDeleted = rb.dec(nBytes);
-                cout << "deleted " << nDeleted << " chars via reading \"" << readString << "\"" << endl;
+                cout << "deleted " << nDeleted << " chars from ring_buffer" << endl;
             } else if (nArgs >= 1 && cmdArgs[0].compare("nrbs") == 0) {
                 bool showBuffer = false;
                 if (nArgs > 1) {
@@ -299,6 +298,12 @@ int main(int argc, char **argv) {
                 }
                 cout << "calling rb.debug_str(" << boolalpha << showBuffer << "):" << endl;
                 cout << rb.debug_str(showBuffer) << endl;
+            } else if (nArgs >= 1 && cmdArgs[0].compare("nrblc") == 0) {
+                cout << "number of lines in ring_buffer is ";
+                cout << rb.linesAvailable() << endl;
+            } else if (nArgs >= 1 && cmdArgs[0].compare("nrblp") == 0) {
+                string line = rb.readLine();
+                cout << "poped line \"" << line << "\" off the ring_buffer" << endl;
             } else {
                 cout << "Unknown command" << cmd << endl;
                 cout << help() << endl;
@@ -358,6 +363,8 @@ string help() {
             << "nrbr <size> #read nBytes from ringBuffer" << endl
             << "nrbdec <size> # remve nBytes from the ringBuffer" << endl
             << "nrbs [true|false]#Show entire ring buffer the true or false option sepcifies wether the characters should be displayed" << endl
+            << "nrblc #Count lines in ring_buffer" << endl
+            << "nrblp #pop a line from the ring_buffer" << endl
             << "exit #Exit program" << endl;
 
     return os.str();
