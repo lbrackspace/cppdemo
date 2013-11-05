@@ -36,7 +36,7 @@ Matrix::Matrix(int rows, int cols) {
 
 Matrix::~Matrix() {
     if (values != NULL) {
-        delete values;
+        delete[] values;
     }
 
     values = NULL;

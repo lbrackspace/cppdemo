@@ -1,8 +1,6 @@
 #include<iostream>
-#include<DemoUtils.h>
-#include<ThreadManager.h>
-#include<Matrix.h>
-#include<Point.h>
+#include<boost/smart_ptr.hpp>
+#include<boost/asio.hpp>
 #include<boost/thread.hpp>
 #include<exception>
 #include<stdexcept>
@@ -12,13 +10,19 @@
 #include<string.h>
 #include<cstdlib>
 #include<unistd.h>
-#include<boost/smart_ptr.hpp>
-#include<boost/asio.hpp>
 #include<map>
-#include <bitset>
+
+
+#include"DemoUtils.h"
+#include"ThreadManager.h"
+#include"Matrix.h"
+#include"Point.h"
+#include"ring_buffer.h"
+
 
 using namespace std;
 using namespace boost;
+using namespace boost::asio;
 
 const int LINE_SIZE = 1024;
 Point getPoint(vector<string> args, int offset);
@@ -26,6 +30,8 @@ string showsizeof();
 string help();
 int nop();
 int demoCopyVsMove();
+std::string address_to_string(boost::asio::ip::address& addr);
+boost::shared_ptr<boost::asio::ip::tcp::resolver::iterator> resolveTCP(std::string& host, std::string& service, boost::asio::io_service& ios, boost::system::error_code& ec);
 
 int main(int argc, char **argv) {
     char *cmd = new char[LINE_SIZE + 1];
@@ -35,6 +41,8 @@ int main(int argc, char **argv) {
     Point p1;
     Point p2;
     Point sum;
+    io_service ios;
+    ring_buffer rb(0);
     vector<string> *strVector = new vector<string>;
     map<string, string> *strMap = new map<string, string>;
     shared_ptr<string> strPtr(new string("default"));
@@ -246,6 +254,50 @@ int main(int argc, char **argv) {
 
             } else if ((nArgs >= 1) && cmdArgs[0].compare("exit") == 0) {
                 break;
+            } else if ((nArgs >= 3) && cmdArgs[0].compare("nsl") == 0) {
+                string & host(cmdArgs[1]);
+                string & service(cmdArgs[2]);
+                boost::system::error_code ec;
+                shared_ptr<ip::tcp::resolver::iterator> res_it(resolveTCP(host, service, ios, ec));
+                if (ec) {
+                    cout << "Error looking up " << host << " " << service << ": " << ec.message() << endl;
+                    continue;
+                }
+                ip::tcp::resolver::iterator end;
+                int i = 0;
+                while (*res_it != end) {
+                    ip::tcp::endpoint ep((*res_it)->endpoint());
+                    boost::asio::ip::address addr = ep.address();
+                    cout << "endpoint[" << i << "]: " << addr.to_string() << " " << ep << endl;
+                    (*res_it)++;
+                    i++;
+                }
+            } else if (nArgs >= 2 && cmdArgs[0].compare("nrb") == 0) {
+                int nSize = std::atoi(cmdArgs[1].c_str());
+                cout << "Creating new ring buff of " << nSize << " chars" << endl;
+                rb = ring_buffer(nSize);
+                nop();
+            } else if (nArgs >= 2 && cmdArgs[0].compare("nrbwrite") == 0) {
+                string nrbString = cmdArgs[1];
+                cout << "Writing string " << nrbString << " to ring buffer" << endl;
+                int nBytes = rb.write(nrbString);
+                cout << "wrote " << nBytes << endl;
+            } else if (nArgs >= 2 && cmdArgs[0].compare("nrbread") == 0) {
+                int nBytes = std::atoi(cmdArgs[1].c_str());
+                string readString(rb.read(nBytes));
+                cout << "Read " << readString.length() << " from ring buffer: " << readString << endl;
+            } else if (nArgs >= 2 && cmdArgs[0].compare("nrbdec") == 0) {
+                int nBytes = std::atoi(cmdArgs[1].c_str());
+                cout << "Decrementing ring buffer by " << nBytes << endl;
+                int nDeleted = rb.dec(nBytes);
+                cout << "deleted " << nDeleted << " chars" << endl;
+            } else if (nArgs >= 1 && cmdArgs[0].compare("nrbshow") == 0) {
+                bool showBuffer = false;
+                if (nArgs > 1) {
+                    showBuffer = (cmdArgs[1].compare("true") == 0) ? true : false;
+                }
+                cout << "calling rb.debug_str(" << boolalpha << showBuffer << "):" << endl;
+                cout << rb.debug_str(showBuffer) << endl;
             } else {
                 cout << "Unknown command" << cmd << endl;
                 cout << help() << endl;
@@ -299,6 +351,12 @@ string help() {
             << "as [nStrs] # push nStrs onto the strPtrs list or just one if nStrs isn't specified" << endl
             << "sc #Display reference count on stringPtr" << endl
             << "cs #clear the smart_ptr<string> vector list" << endl
+            << "nsl <host> <port> #Do a boost asio resolver call on the specified host and port" << endl
+            << "nrb <size> #Create new ring buffer" << endl
+            << "nrbwrite <str> #Add string to ring bufer" << endl
+            << "nrbread <size> #read nBytes from ringBuffer" << endl
+            << "nrbdec <size> # remve nBytes from the ringBuffer" << endl
+            << "nrbshow #Show entire ring buffer" << endl
             << "exit #Exit program" << endl;
 
     return os.str();
@@ -319,16 +377,43 @@ string showsizeof() {
             << "sizeof(boost::thread):    " << setw(4) << sizeof (boost::thread) << endl
             << "sizeof(ThreadManager):    " << setw(4) << sizeof (ThreadManager) << endl
             << "sizeof(Matrix):           " << setw(4) << sizeof (Matrix) << endl
+            << "sizeof(bool):             " << setw(4) << sizeof (bool) << endl
             << "sizeof(vector<double>):   " << setw(4) << sizeof (vector<double>) << endl
             << "sizeof(vector<double *>): " << setw(4) << sizeof (vector<double *>) << endl
             << "sizeof(shared_ptr<string>): " << setw(4) << sizeof (shared_ptr<string>) << endl
             << "sizeof(shared_ptr<double>): " << setw(4) << sizeof (shared_ptr<double>) << endl
+            << "sizeof(ring_buffer): " << setw(4) << sizeof (ring_buffer) << endl
             << "sizeof(boost::ip::tcp::resolver " << setw(4) << sizeof (boost::asio::ip::tcp::resolver) << endl
             << "sizeof(boost::ip::tcp::resolver::iterator " << setw(4) << sizeof (boost::asio::ip::tcp::resolver::iterator) << endl
             << endl
             << "boost::thread::hardware_concurrency(): " << setw(4) << boost::thread::hardware_concurrency() << endl;
 
     return os.str();
+}
+
+string address_to_string(ip::address& addr) {
+    ostringstream os;
+    os << "{"
+            << " is_loopback=" << boolalpha << addr.is_loopback() << ", "
+            << "is_multicase: " << boolalpha << addr.is_multicast() << ", "
+            << "is_unspecified: " << boolalpha << addr.is_unspecified() << ", "
+            << "is_v4: " << boolalpha << addr.is_v4() << ", "
+            << "is_v6: " << boolalpha << addr.is_v6() << ", "
+            << "addr: " << addr.to_string() << "}";
+    return os.str();
+}
+
+boost::shared_ptr<ip::tcp::resolver::iterator> resolveTCP(string& host, string& service, io_service& ios, boost::system::error_code& ec) {
+    ip::tcp::resolver r(ios);
+    ip::tcp::resolver::query q(host, service, boost::asio::ip::resolver_query_base::all_matching);
+    boost::shared_ptr<ip::tcp::resolver::iterator> it(new ip::tcp::resolver::iterator(r.resolve(q, ec)));
+    if (ec) {
+        boost::shared_ptr<boost::asio::ip::tcp::resolver::iterator> null;
+        return null;
+    }
+    //ip::tcp::resolver::iterator it = r.resolve(q, ec);
+    cout << "it @" << it.get() << endl;
+    return it;
 }
 
 int nop() {
