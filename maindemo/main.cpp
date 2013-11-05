@@ -277,21 +277,22 @@ int main(int argc, char **argv) {
                 cout << "Creating new ring buff of " << nSize << " chars" << endl;
                 rb = ring_buffer(nSize);
                 nop();
-            } else if (nArgs >= 2 && cmdArgs[0].compare("nrbwrite") == 0) {
-                string nrbString = cmdArgs[1];
+            } else if (nArgs >= 2 && cmdArgs[0].compare("nrbw") == 0) {
+                string nrbString = DemoUtils::joinStrings(cmdArgs, " ", 1);
                 cout << "Writing string " << nrbString << " to ring buffer" << endl;
-                int nBytes = rb.write(nrbString);
+                int nBytes = rb.write(nrbString + "\n");
                 cout << "wrote " << nBytes << endl;
-            } else if (nArgs >= 2 && cmdArgs[0].compare("nrbread") == 0) {
+            } else if (nArgs >= 2 && cmdArgs[0].compare("nrbr") == 0) {
                 int nBytes = std::atoi(cmdArgs[1].c_str());
                 string readString(rb.read(nBytes));
-                cout << "Read " << readString.length() << " from ring buffer: " << readString << endl;
+                cout << "Read " << readString.length() << " from ring buffer: \"" << readString << "\"" << endl;
             } else if (nArgs >= 2 && cmdArgs[0].compare("nrbdec") == 0) {
                 int nBytes = std::atoi(cmdArgs[1].c_str());
                 cout << "Decrementing ring buffer by " << nBytes << endl;
+                string readString(rb.read(nBytes));
                 int nDeleted = rb.dec(nBytes);
-                cout << "deleted " << nDeleted << " chars" << endl;
-            } else if (nArgs >= 1 && cmdArgs[0].compare("nrbshow") == 0) {
+                cout << "deleted " << nDeleted << " chars via reading \"" << readString << "\"" << endl;
+            } else if (nArgs >= 1 && cmdArgs[0].compare("nrbs") == 0) {
                 bool showBuffer = false;
                 if (nArgs > 1) {
                     showBuffer = (cmdArgs[1].compare("true") == 0) ? true : false;
@@ -353,10 +354,10 @@ string help() {
             << "cs #clear the smart_ptr<string> vector list" << endl
             << "nsl <host> <port> #Do a boost asio resolver call on the specified host and port" << endl
             << "nrb <size> #Create new ring buffer" << endl
-            << "nrbwrite <str> #Add string to ring bufer" << endl
-            << "nrbread <size> #read nBytes from ringBuffer" << endl
+            << "nrbw <str> #Add string to ring bufer" << endl
+            << "nrbr <size> #read nBytes from ringBuffer" << endl
             << "nrbdec <size> # remve nBytes from the ringBuffer" << endl
-            << "nrbshow #Show entire ring buffer" << endl
+            << "nrbs [true|false]#Show entire ring buffer the true or false option sepcifies wether the characters should be displayed" << endl
             << "exit #Exit program" << endl;
 
     return os.str();

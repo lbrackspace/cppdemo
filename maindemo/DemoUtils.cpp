@@ -82,6 +82,17 @@ int DemoUtils::string2vector(const string& strIn, vector<string>& strVector, cha
     return nStrings;
 }
 
+string DemoUtils::joinStrings(const vector<string> strVector, const string delim, int start_idx) {
+    ostringstream os;
+    int i;
+    int last_i = strVector.size() - 1;
+    for (i = start_idx; i < last_i; i++) {
+        os << strVector[i] << delim;
+    }
+    os << strVector[i];
+    return os.str();
+}
+
 string DemoUtils::vector2string(const vector<string> &strVector) {
     ostringstream os;
     const vector<string>::const_iterator beg = strVector.begin();

@@ -15,7 +15,7 @@ ring_buffer::ring_buffer(int ds) {
 
 ring_buffer& ring_buffer::operator =(const ring_buffer& orig) {
     const ring_buffer *origPtr = &orig;
-    std::cout << "copy assignment operator" << this << " ring_buffer(" << origPtr << ") called" << std::endl;
+    std::cout << "copy assignment operator " << this << " ring_buffer(" << origPtr << ") called" << std::endl;
     int ds = orig.data_size;
     data_size = ds;
     char *origcharPtr = orig.data.get();
@@ -23,10 +23,13 @@ ring_buffer& ring_buffer::operator =(const ring_buffer& orig) {
     char *charPtr = data.get();
     h_idx = orig.h_idx;
     used = orig.used;
-    for (int i = 0; i < ds; i++) {
-        charPtr[i] = origcharPtr[i];
+    int u = used;
+    int h = h_idx;
+    int abs_i;
+    for (int i = 0; i < u; i++) {
+        abs_i = (h + i) % ds;
+        charPtr[abs_i] = origcharPtr[abs_i];
     }
-    return *this;
 }
 
 ring_buffer::ring_buffer(const ring_buffer& orig) {
@@ -76,7 +79,11 @@ int ring_buffer::write(const char *strPtr, int write_size) {
     int f = data_size - used;
     int ds = data_size;
     int di = 0;
-    int ri = (h_idx + used) % ds;
+    int ri;
+    if (ds == 0) {
+        return 0;
+    }
+    ri = (h_idx + used) % ds;
     if (ds <= 0) {
         return 0;
     }
