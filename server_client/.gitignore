@@ -1,4 +1,5 @@
 *.o
+.dep.inc
 boosttests
 server
 client

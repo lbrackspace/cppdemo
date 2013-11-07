@@ -6,13 +6,11 @@
 #include<boost/thread.hpp>
 #include<boost/bind.hpp>
 
+#include"server.h"
+
 using namespace std;
 using namespace boost;
 using namespace boost::asio;
-
-int usage(char *prog);
-int listener(string ip_addr_str, int port);
-int server(shared_ptr<ip::tcp::socket> sockPtr);
 
 const int SOCKBUFFSIZE = 255;
 
