@@ -22,7 +22,7 @@ ThreadManager::~ThreadManager() {
 }
 
 void ThreadManager::newThread(int sleepSecs, int nTimes) {
-    boost::thread *th = new thread(runner, boost::ref(os), threads.size() + 1, sleepSecs, nTimes);
+    thread *th = new thread(runner, boost::ref(os), threads.size() + 1, sleepSecs, nTimes);
     threads.push_back(th);
 }
 

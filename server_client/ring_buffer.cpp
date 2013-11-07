@@ -3,7 +3,13 @@
 #include<iomanip>
 #include<sstream>
 #include<boost/shared_array.hpp>
+#include<string>
+#include<vector>
+#include<sstream>
+
 #include "ring_buffer.h"
+
+const int STRBUFFSIZE = 4096;
 
 ring_buffer::ring_buffer(int ds) {
     std::cout << "ring_buffer(" << ds << ") construct @" << this << std::endl;
@@ -204,5 +210,38 @@ std::string ring_buffer::debug_str(bool showBuffer) const {
             << " this=" << this
             << "}"
             << std::endl;
+    return os.str();
+}
+
+int ring_buffer::stringToVector(const std::string& strIn, std::vector<std::string>& strVector, char delim, bool skipLF) {
+    int nStrings = 0;
+    char buff[STRBUFFSIZE + 1];
+    buff[0] = '\0';
+    int ci = 0;
+    int cb = 0;
+    int cl;
+    int li = strIn.size();
+    for (ci = 0; ci <= li; ci++) {
+        cl = ci - cb;
+        if (strIn[ci] == delim || strIn[ci] == '\0' || cl >= STRBUFFSIZE || (skipLF && strIn[ci] == '\n')) {
+            if (cl <= 0) {
+                cb = ci + 1;
+                buff[0] = '\0';
+                continue;
+            }
+            buff[ci - cb] = '\0';
+            cb = ci + 1;
+            strVector.push_back(std::string(buff));
+            nStrings++;
+            buff[0] = '\0';
+            continue;
+        }
+        buff[ci - cb] = strIn[ci];
+    }
+    return nStrings;
+}
+
+std::string ring_buffer::vectorToString(const std::vector<std::string> &strVector, char delim) {
+    std::ostringstream os;
     return os.str();
 }

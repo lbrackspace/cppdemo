@@ -1,5 +1,7 @@
 *.o
+boosttests
 server
 client
+lookup
 *.mk
 nbproject/*
