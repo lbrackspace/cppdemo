@@ -383,6 +383,7 @@ string showsizeof() {
             << "sizeof(void *):           " << setw(4) << sizeof (void *) << endl
             << "sizeof(string):           " << setw(4) << sizeof (string) << endl
             << "sizeof(boost::thread):    " << setw(4) << sizeof (boost::thread) << endl
+            << "sizeof(boost::mutex):     " << setw(4) << sizeof (boost::mutex) << endl
             << "sizeof(ThreadManager):    " << setw(4) << sizeof (ThreadManager) << endl
             << "sizeof(Matrix):           " << setw(4) << sizeof (Matrix) << endl
             << "sizeof(bool):             " << setw(4) << sizeof (bool) << endl
@@ -390,6 +391,7 @@ string showsizeof() {
             << "sizeof(vector<double *>): " << setw(4) << sizeof (vector<double *>) << endl
             << "sizeof(shared_ptr<string>): " << setw(4) << sizeof (shared_ptr<string>) << endl
             << "sizeof(shared_ptr<double>): " << setw(4) << sizeof (shared_ptr<double>) << endl
+            << "sizeof(unordered_map):      " << setw(4) << sizeof(unordered_map<string,string>) << endl
             << "sizeof(ring_buffer): " << setw(4) << sizeof (ring_buffer) << endl
             << "sizeof(boost::ip::tcp::resolver " << setw(4) << sizeof (boost::asio::ip::tcp::resolver) << endl
             << "sizeof(boost::ip::tcp::resolver::iterator " << setw(4) << sizeof (boost::asio::ip::tcp::resolver::iterator) << endl

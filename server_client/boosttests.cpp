@@ -1,10 +1,14 @@
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MAIN
+
+#include<iostream>
 #include<boost/test/unit_test.hpp>
 #include<string>
 #include<vector>
 
+
 #include"ring_buffer.h"
+#include"GlbContainer.h"
 
 using namespace boost;
 using namespace std;
@@ -42,4 +46,8 @@ BOOST_AUTO_TEST_CASE(ring_buffer_should_strip_all_line_feeds_too) {
     BOOST_CHECK(strVector[3].compare("test") == 0);
     BOOST_CHECK(strVector[4].compare("blah") == 0);
     BOOST_CHECK(strVector[5].compare("blah") == 0);
+}
+
+BOOST_AUTO_TEST_CASE(show_size_of_Glb) {
+    std::cout << "sizeof(GlbContainer): " << sizeof (GlbContainer) << std::endl;
 }

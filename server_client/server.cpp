@@ -7,6 +7,7 @@
 #include<boost/bind.hpp>
 
 #include"server.h"
+#include"GlbContainer.h"
 
 using namespace std;
 using namespace boost;
@@ -19,6 +20,8 @@ int main(int argc, char **argv) {
         usage(argv[0]);
         return -1;
     }
+    glbMapLock.lock();
+    glbMapLock.unlock();
     string ip_addr_str(argv[1]);
     int port = std::atoi(argv[2]);
     listener(ip_addr_str, port);
