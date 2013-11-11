@@ -10,13 +10,10 @@
 class GlbContainer {
 private:
     long nLookups;
-    int nReaders;
-    int nWriters;
     int glbType;
 
     boost::mutex nLookupsLock;
-    boost::mutex rLock;
-    boost::mutex wLock;
+    boost::shared_mutex lock;
     boost::unordered_map<std::string, std::vector<std::string> > geoIpv4Records;
     boost::unordered_map<std::string, std::vector<std::string> > geoIpv6Records;
     std::vector<std::string> ipv6Records;
@@ -28,14 +25,10 @@ public:
 
     GlbContainer() {
         nLookups = 0;
-        nReaders = 0;
-        nWriters = 0;
     };
 
     GlbContainer(int glbType) {
         this->glbType = glbType;
-        nReaders = 0;
-        nWriters = 0;
         nLookups = 0;
     }
 
@@ -59,7 +52,7 @@ public:
 };
 
 extern boost::unordered_map<std::string, boost::shared_ptr<GlbContainer > > glbMap;
-extern boost::mutex glbMapLock;
+extern boost::shared_mutex glbMapLock;
 
 #endif	/* GLBCONTAINER_H */
 
