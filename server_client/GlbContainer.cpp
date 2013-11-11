@@ -6,4 +6,4 @@
 #include<string>
 
 boost::unordered_map<std::string, boost::shared_ptr<GlbContainer> > glbMap;
-boost::mutex glbMapLock;
+boost::shared_mutex glbMapLock;

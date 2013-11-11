@@ -1,0 +1,8 @@
+*.o
+nbproject/*
+*.mk
+.dep.inc
+.cproject
+.project
+.settings/*
+
